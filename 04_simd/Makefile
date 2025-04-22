@@ -21,4 +21,4 @@
 10_intrinsic_sin: 10_intrinsic_sin.cpp
 	icc 10_intrinsic_sin.cpp -xHost
 11_nbody: 11_nbody.cpp
-	g++ 11_nbody.cpp -march=native -O3
+	g++ 11_nbody.cpp -mavx512f -O3
