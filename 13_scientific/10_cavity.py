@@ -20,6 +20,10 @@ p = np.zeros((ny, nx))
 b = np.zeros((ny, nx))
 X, Y = np.meshgrid(x, y)
 
+ufile = open("pyu.dat", "w")
+vfile = open("pyv.dat", "w")
+pfile = open("pyp.dat", "w")
+
 for n in range(nt):
     for j in range(1, ny-1):
         for i in range(1, nx-1):
@@ -50,7 +54,7 @@ for n in range(nt):
                                + nu * dt / dy**2 * (un[j+1, i] - 2 * un[j, i] + un[j-1, i])
             v[j, i] = vn[j, i] - vn[j, i] * dt / dx * (vn[j, i] - vn[j, i - 1])\
                                - vn[j, i] * dt / dy * (vn[j, i] - vn[j - 1, i])\
-                               - dt / (2 * rho * dx) * (p[j+1, i] - p[j-1, i])\
+                               - dt / (2 * rho * dy) * (p[j+1, i] - p[j-1, i])\
                                + nu * dt / dx**2 * (vn[j, i+1] - 2 * vn[j, i] + vn[j, i-1])\
                                + nu * dt / dy**2 * (vn[j+1, i] - 2 * vn[j, i] + vn[j-1, i])
     u[0, :]  = 0
@@ -65,4 +69,18 @@ for n in range(nt):
     plt.quiver(X[::2, ::2], Y[::2, ::2], u[::2, ::2], v[::2, ::2])
     plt.pause(.01)
     plt.clf()
+    # log
+    if n % 10 == 0:
+        for j in range(ny):
+            for i in range(nx):
+                ufile.write(f"{u[j][i].astype(np.float32)} ")
+                vfile.write(f"{v[j][i].astype(np.float32)} ")
+                pfile.write(f"{p[j][i].astype(np.float32)} ")
+        ufile.write("\n")
+        vfile.write("\n")
+        pfile.write("\n") 
+ufile.close()
+vfile.close()
+pfile.close()
+
 plt.show()

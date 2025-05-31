@@ -25,6 +25,7 @@ int main() {
   matrix un(ny,vector<float>(nx));
   matrix vn(ny,vector<float>(nx));
   matrix pn(ny,vector<float>(nx));
+  #pragma omp parallel for shared(u, v, p, b, nx, ny)
   for (int j=0; j<ny; j++) {
     for (int i=0; i<nx; i++) {
       u[j][i] = 0;
@@ -41,6 +42,7 @@ int main() {
   pfile << fixed << setprecision(10);
 
   for (int n=0; n<nt; n++) {
+    #pragma omp parallel for shared(b, u, v, rho, dt, dx, dy, nx, ny)
     for (int j=1; j<ny-1; j++) {
       for (int i=1; i<nx-1; i++) {
         // Compute b[j][i]
@@ -57,9 +59,11 @@ int main() {
       }
     }
     for (int it=0; it<nit; it++) {
+      #pragma omp parallel for shared(pn, p, nx, ny)
       for (int j=0; j<ny; j++)
         for (int i=0; i<nx; i++)
 	  pn[j][i] = p[j][i];
+      #pragma omp parallel for shared(p, pn, b, dx, dy, nx, ny)
       for (int j=1; j<ny-1; j++) {
         for (int i=1; i<nx-1; i++) {
 	  // Compute p[j][i]
@@ -69,23 +73,27 @@ int main() {
 		      / (2 * (dx*dx + dy*dy));
 	}
       }
+      #pragma omp parallel for shared(p, nx, ny)
       for (int j=0; j<ny; j++) {
         // Compute p[j][0] and p[j][nx-1]
 	p[j][nx-1] = p[j][nx-2];
         p[j][0] = p[j][1];
       }
+      #pragma omp parallel for shared(p, nx, ny)
       for (int i=0; i<nx; i++) {
 	// Compute p[0][i] and p[ny-1][i]
         p[0][i] = p[1][i];
 	p[ny-1][i] = 0;
       }
     }
+    #pragma omp parallel for shared(un, vn, u, v, nx, ny)
     for (int j=0; j<ny; j++) {
       for (int i=0; i<nx; i++) {
         un[j][i] = u[j][i];
 	vn[j][i] = v[j][i];
       }
     }
+    #pragma omp parallel for shared(u, v, un, vn, p, dt, dx, dy, rho, nu, nx, ny)
     for (int j=1; j<ny-1; j++) {
       for (int i=1; i<nx-1; i++) {
 	// Compute u[j][i] and v[j][i]
@@ -101,6 +109,7 @@ int main() {
           + nu * dt / (dy*dy) * (vn[j+1][i] - 2.0 * vn[j][i] + vn[j-1][i]);
       }
     }
+    #pragma omp parallel for shared(u, v, nx, ny)
     for (int j=0; j<ny; j++) {
       // Compute u[j][0], u[j][nx-1], v[j][0], v[j][nx-1]
       u[j][0] = 0;
@@ -108,6 +117,7 @@ int main() {
       v[j][0] = 0;
       v[j][nx-1] = 0;
     }
+     #pragma omp parallel for shared(u, v, nx, ny)
     for (int i=0; i<nx; i++) {
       // Compute u[0][i], u[ny-1][i], v[0][i], v[ny-1][i]
       u[0][i] = 0;
