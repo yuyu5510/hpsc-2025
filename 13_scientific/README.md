@@ -1,6 +1,8 @@
-10_cavity.cpp -> Rewrite the 2-D Navier-Stokes code from the Scientific Computing lecture in C++
+10_cavity.cpp        -> Rewrite the 2-D Navier-Stokes code from the Scientific Computing lecture in C++
+
 10_cavity_openmp.cpp -> OpenMP Version
-10_cavity.cu -> cuda Version
+
+10_cavity.cu         -> cuda Version
 
 
 In 10_cavity.py, I outputted the values of p, u, and v for cases where n % 10 == 0.
