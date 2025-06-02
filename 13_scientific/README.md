@@ -2,6 +2,8 @@
 
 10_cavity_openmp.cpp -> OpenMP Version
 
+10_cavity_openacc.cpp -> OpenACC Version
+
 10_cavity.cu         -> cuda Version
 
 
